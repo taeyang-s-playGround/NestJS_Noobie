@@ -1,54 +1,51 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Board } from './board.entity';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 
 @Injectable()
 export class BoardService {
-  private boards: Board[] = [];
-  private nextId = 1;
+  constructor(
+    @InjectRepository(Board)
+    private readonly boardRepository: Repository<Board>,
+  ) {}
 
-  findAll(): Board[] {
-    return this.boards;
+  findAll(): Promise<Board[]> {
+    return this.boardRepository.find();
   }
 
-  findOne(id: number): Board {
-    const board = this.boards.find((b) => b.id === id);
+  async findOne(id: number): Promise<Board> {
+    const board = await this.boardRepository.findOne({ where: { id } });
     if (!board) {
       throw new NotFoundException(`Board with id ${id} not found`);
     }
     return board;
   }
 
-  create(createBoardDto: CreateBoardDto): Board {
-    const newBoard: Board = {
-      id: this.nextId++,
-      title: createBoardDto.title,
-      description: createBoardDto.description,
-      createdAt: new Date(),
-    };
-    this.boards.push(newBoard);
-    return newBoard;
+  create(createBoardDto: CreateBoardDto): Promise<Board> {
+    const board = this.boardRepository.create(createBoardDto);
+    return this.boardRepository.save(board);
   }
 
-  update(id: number, updateBoardDto: UpdateBoardDto): Board {
-    const board = this.findOne(id);
-    if (updateBoardDto.title !== undefined) {
-      board.title = updateBoardDto.title;
+  async update(id: number, updateBoardDto: UpdateBoardDto): Promise<Board> {
+    const board = await this.findOne(id);
+    const { title, description } = updateBoardDto;
+    if (title !== undefined) {
+      board.title = title;
     }
-    if (updateBoardDto.description !== undefined) {
-      board.description = updateBoardDto.description;
+    if (description !== undefined) {
+      board.description = description;
     }
-    return board;
+    return this.boardRepository.save(board);
   }
 
-  remove(id: number): void {
-    const index = this.boards.findIndex((b) => b.id === id);
-    if (index === -1) {
+  async remove(id: number): Promise<void> {
+    const result = await this.boardRepository.delete(id);
+    if (result.affected === 0) {
       throw new NotFoundException(`Board with id ${id} not found`);
     }
-    this.boards.splice(index, 1);
   }
 }
-
 

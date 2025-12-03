@@ -18,17 +18,17 @@ export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
   @Get()
-  findAll(): Board[] {
+  findAll(): Promise<Board[]> {
     return this.boardService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Board {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Board> {
     return this.boardService.findOne(id);
   }
 
   @Post()
-  create(@Body() createBoardDto: CreateBoardDto): Board {
+  create(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
     return this.boardService.create(createBoardDto);
   }
 
@@ -36,12 +36,12 @@ export class BoardController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBoardDto: UpdateBoardDto,
-  ): Board {
+  ): Promise<Board> {
     return this.boardService.update(id, updateBoardDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): void {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.boardService.remove(id);
   }
 }
