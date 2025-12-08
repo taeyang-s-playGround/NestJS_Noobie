@@ -1,10 +1,8 @@
 import { CreateBoardDto } from './create-board.dto';
 import { PartialType } from '@nestjs/mapped-types';
+import { IsString, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
 
-// 간단한 예제이므로 외부 유틸(PartialType) 대신 직접 Partial 형태를 구현합니다.
-export class UpdateBoardDto implements Partial<CreateBoardDto> {
+export class UpdateBoardDto {
   title?: string;
   description?: string;
 }
-
-
