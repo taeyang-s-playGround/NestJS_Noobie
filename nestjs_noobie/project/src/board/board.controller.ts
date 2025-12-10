@@ -12,38 +12,37 @@ import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/request/create-board.dto';
 import { UpdateBoardDto } from './dto/request/update-board.dto';
 import { Board } from './board.entity';
+import { getBoardResponse } from './dto/response/getBoardResponse';
 
 @Controller('boards')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
   @Get()
-  findAll(): Promise<Board[]> {
-    return this.boardService.findAll();
+  async findAll() {
+    return await this.boardService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Board> {
-    return this.boardService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return await this.boardService.findOne(id);
   }
 
   @Post()
-  create(@Body() createBoardDto: CreateBoardDto): Promise<Board> {
-    return this.boardService.create(createBoardDto);
+  async create(@Body() createBoardDto: CreateBoardDto) {
+    return await this.boardService.create(createBoardDto);
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateBoardDto: UpdateBoardDto,
-  ): Promise<Board> {
-    return this.boardService.update(id, updateBoardDto);
+  ) {
+    return await this.boardService.update(id, updateBoardDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.boardService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return await this.boardService.remove(id);
   }
 }
-
-

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Board } from './board.entity';
 import { CreateBoardDto } from './dto/request/create-board.dto';
 import { UpdateBoardDto } from './dto/request/update-board.dto';
+import { getBoardResponse } from './dto/response/getBoardResponse';
 
 @Injectable()
 export class BoardService {
@@ -12,17 +13,31 @@ export class BoardService {
     private readonly boardRepository: Repository<Board>,
   ) {}
 
-  findAll(): Promise<Board[]> {
-    return this.boardRepository.find();
+findAll(): Promise<getBoardResponse[]> {
+  return this.boardRepository.find().then(boards =>
+    boards.map(board => ({
+      id: board.id,
+      title: board.title,
+      description: board.description,
+      createdAt: board.createdAt,
+    })),
+  );
+}
+
+async findOne(id: number): Promise<getBoardResponse> {
+  const board = await this.boardRepository.findOne({ where: { id } });
+
+  if (!board) {
+    throw new NotFoundException(`Board with id ${id} not found`);
   }
 
-  async findOne(id: number): Promise<Board> {
-    const board = await this.boardRepository.findOne({ where: { id } });
-    if (!board) {
-      throw new NotFoundException(`Board with id ${id} not found`);
-    }
-    return board;
-  }
+  return {
+    id: board.id,
+    title: board.title,
+    description: board.description,
+    createdAt: board.createdAt,
+  };
+}
 
   create(createBoardDto: CreateBoardDto): Promise<Board> {
     const board = this.boardRepository.create(createBoardDto);
