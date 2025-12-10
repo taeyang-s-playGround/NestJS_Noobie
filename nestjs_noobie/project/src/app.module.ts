@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Board } from './board/board.entity';
+import { User } from './user/user.entity';
 import { BoardModule } from './board/board.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,12 +23,13 @@ import { BoardModule } from './board/board.module';
         username: configService.get<string>('DB_USERNAME', 'root'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE', 'nestjs_noobie'),
-        entities: [Board],
+        entities: [Board, User], // User 엔티티 추가
         synchronize: configService.get<string>('NODE_ENV') !== 'production', // 프로덕션에서는 false
       }),
       inject: [ConfigService],
     }),
     BoardModule,
+    AuthModule, // AuthModule 추가
   ],
 })
 export class AppModule {}
