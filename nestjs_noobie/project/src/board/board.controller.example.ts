@@ -14,8 +14,8 @@ import {
   Request, // JWT 가드 사용 시 request에서 user 정보를 가져올 수 있음
 } from '@nestjs/common';
 import { BoardService } from './board.service';
-import { CreateBoardDto } from './dto/create-board.dto';
-import { UpdateBoardDto } from './dto/update-board.dto';
+import { CreateBoardDto } from './dto/request/create-board.dto';
+import { UpdateBoardDto } from './dto/request/update-board.dto';
 import { Board } from './board.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
